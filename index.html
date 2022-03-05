@@ -1,0 +1,217 @@
+<html>
+    <body>
+    </body>
+    <template id="playerHtml">
+        <div class="player">
+            <div class="inlineBlock">
+                <div class="target">
+                </div>
+                <div class="progress">
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="victory">
+        <div class="victory">
+        </div>
+    </template>
+
+    <script src="words.js"></script><script src="chance.min.js"></script>
+
+    <script>
+    var playerHtml = document.querySelector("#playerHtml");
+
+    var nbPlayers = 2;
+    var players = [];
+    for(var i=1; i<=nbPlayers; i++)
+    {
+        createPlayer("Player "+i);
+    }
+    resetPlayers();
+
+    function resetPlayers()
+    {
+        var wordLists = [];
+        var weights = [];
+        for(var i=0;i<words.length;i++)
+        {
+            if(nbPlayers <= words[i].maxPlayers)
+            {
+                wordLists.push(words[i].words);
+                weights.push(words[i].weight);
+            }
+        }
+        var list = weighted(wordLists, weights);
+        do
+        {
+            var picked = pickWords(list);
+        }
+        while(picked.includes(undefined))
+        
+        for(var i=0; i<nbPlayers; i++)
+        {
+            resetPlayer(players[i], picked[i]);
+        }
+    }
+
+    function pickWords(list)
+    {
+        var picked = [];
+
+        var wordList = list;
+
+        for(var i=0; i<nbPlayers; i++)
+        {
+            if(typeof(wordList) != "number")
+            {
+                var matches = [];
+                word = wordList[Math.floor(Math.random()*wordList.length)];
+                picked.push(word);
+    
+                for(var j=0; j<wordList.length; j++)
+                {
+                    var add = true;
+                    for (var k = 0; k < word.length; k++)
+                    {
+                        if(wordList[j].includes(word.charAt(k)))
+                        {
+                            add = false;
+                        }
+                    }
+                    if(add)
+                    {
+                        matches.push(wordList[j]);
+                    }
+                }
+                wordList = matches;
+            }
+            else
+            {
+                var numbers = [0,1,2,3,4,5,6,7,8,9];
+                for(var i=0; i<nbPlayers; i++)
+                {
+                    var str = "";
+                    for(var j=0; j<wordList; j++)
+                    {
+                        str += numbers.splice(Math.floor(Math.random()*numbers.length),1)[0];
+                    }
+                    picked.push(str);
+                }
+            }
+        }
+        return picked;
+    }
+
+    function createPlayer(name)
+    {
+        var player = {
+            word : "",
+            progress : "",
+            node : document.body.appendChild(playerHtml.content.firstElementChild.cloneNode(true)),
+            name: name
+        };
+        players.push(player);
+    }
+
+    function resetPlayer(player, word)
+    {
+        player.word = word;
+        player.progress = "";
+        player.node.querySelector(".target").innerHTML = player.word;
+        player.node.querySelector(".progress").innerHTML = "";
+    }
+
+    function gameUpdate(e){
+        updatePlayers(e.key.toLowerCase())
+        if(e.keyCode == 13)
+        {
+            resetPlayers();
+        }
+    }
+
+    function gameDone(e){
+        if(e.keyCode == 13)
+        {
+            document.querySelector(".victory").remove();
+            resetPlayers();
+            onkeydown = gameUpdate;
+        }
+    }
+
+    onkeydown = gameUpdate;
+
+    function updatePlayers(letter)
+    {
+        for(var i=0; i<players.length; i++)
+        {
+            var player = players[i];
+            if(player.progress == "")
+            {
+                var target = player.word.charAt(0);
+            } else {
+                var target = player.word.split(player.progress)[1].charAt(0);
+            }
+    
+            if(target == letter)
+            {
+                player.progress += target;
+                player.node.querySelector(".progress").innerHTML = player.progress;
+            }
+            if(player.progress == player.word)
+            {
+                onkeydown = gameDone;
+                var victory = document.querySelector("#victory").content.firstElementChild.cloneNode(true);
+                victory.innerHTML = player.name + " wins!";
+                document.body.appendChild(victory);
+            }
+        }
+    }
+    </script>
+    
+    <style>
+        body{
+            background-color: white;
+            font-size: 25px;
+            margin: 0;
+        }
+        .inlineBlock{
+            display: inline-block;
+        }
+    
+        .player{
+            width: 49%;
+            display: inline-block;
+            vertical-align: top;
+            text-align: center;
+        }
+
+        .target{
+            text-align: center;
+            color: #2ff2e0;
+            font-size: 90px;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: black;
+        }
+        .progress{
+            font-size: 90px;
+            text-align: left;
+            height: 108px;
+        }
+
+        .separator {
+            width: 5px;
+            height: 100%;
+            display: inline-block;
+            background: black;
+        }
+
+        .victory{
+            font-size: 100px;
+            width: 100%;
+            text-align: center;
+            color: hotpink;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
+        }
+    </style>
+</html>
