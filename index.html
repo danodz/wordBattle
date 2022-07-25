@@ -13,6 +13,10 @@
                     </div>
                     <div class="progress">
                     </div>
+                    <div class="winCount hidden">
+                        Wins: 
+                        <span class="count">0</span>
+                    </div>
                 </div>
             </div>
         </template>
@@ -134,7 +138,8 @@
             word : "",
             progress : "",
             node : document.body.appendChild(playerHtml.content.firstElementChild.cloneNode(true)),
-            name: name
+            name: name,
+            wins: 0
         };
         players.push(player);
     }
@@ -150,10 +155,6 @@
     function gameUpdate(e){
         e.preventDefault();
         updatePlayers(e.key.toLowerCase())
-        if(e.keyCode == 13)
-        {
-            resetPlayers();
-        }
         return false;
     }
 
@@ -163,6 +164,10 @@
             document.querySelector(".victory").remove();
             resetPlayers();
             onkeydown = gameUpdate;
+            document.querySelectorAll(".winCount").forEach((e)=>{
+                e.classList.add("hidden");
+            });
+            
         }
     }
 
@@ -186,9 +191,14 @@
             if(player.progress == player.word)
             {
                 onkeydown = gameDone;
+                player.wins += 1;
                 var victory = document.querySelector("#victory").content.firstElementChild.cloneNode(true);
                 victory.querySelector(".player").innerHTML = player.name + " wins!";
                 document.body.appendChild(victory);
+                player.node.querySelector(".count").innerHTML = player.wins;
+                document.querySelectorAll(".winCount").forEach((e)=>{
+                    e.classList.remove("hidden");
+                });
             }
         }
     }
@@ -204,6 +214,11 @@
             font-size: 25px;
             margin: 0;
         }
+
+        .hidden{
+            display: none;
+        }
+
         .inlineBlock{
             display: inline-block;
         }
@@ -226,6 +241,7 @@
             font-size: 90px;
             text-align: left;
             height: 108px;
+            line-height: 90px;
         }
 
         .separator {
@@ -238,6 +254,8 @@
         .victory{
             width: 100%;
             text-align: center;
+            position: absolute;
+            top: 200px;
         }
 
         .victory .player{
