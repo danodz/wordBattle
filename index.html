@@ -36,7 +36,7 @@
 
         <template id="victory">
             <div class="victory">
-                <div class="player">
+                <div class="winningPlayer">
                 </div>
                 <div class="restartMsg">
                     Press Enter to restart
@@ -208,7 +208,7 @@
                 onkeydown = gameDone;
                 player.wins += 1;
                 var victory = document.querySelector("#victory").content.firstElementChild.cloneNode(true);
-                victory.querySelector(".player").innerHTML = player.name + " wins!";
+                victory.querySelector(".winningPlayer").innerHTML = player.name + " wins!";
                 document.body.appendChild(victory);
                 player.node.querySelector(".count").innerHTML = player.wins;
                 document.querySelectorAll(".winCount").forEach((e)=>{
@@ -274,7 +274,7 @@
             top: 200px;
         }
 
-        .victory .player{
+        .victory .winningPlayer{
             color: hotpink;
             font-size: 100px;
             -webkit-text-stroke-width: 1px;
@@ -283,6 +283,7 @@
 
         .victory .restartMsg{
             color: black;
+            font-size: 30px;
         }
 
         .instructions{
