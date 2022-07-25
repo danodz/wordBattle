@@ -148,11 +148,13 @@
     }
 
     function gameUpdate(e){
+        e.preventDefault();
         updatePlayers(e.key.toLowerCase())
         if(e.keyCode == 13)
         {
             resetPlayers();
         }
+        return false;
     }
 
     function gameDone(e){
@@ -190,6 +192,10 @@
             }
         }
     }
+    
+    onbeforeunload = function(e) {
+        return 'Are you sure you want to leave?';
+    };
     </script>
     
     <style>
