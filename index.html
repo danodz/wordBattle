@@ -9,6 +9,13 @@
                 The first to finish wins the round. <br>
                 Play as many rounds as you want.<br><br>
                 Press Enter to start.
+
+                <select class="nbPlayers">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
             </div>
         </template>
     
@@ -45,10 +52,6 @@
 
     var nbPlayers = 2;
     var players = [];
-    for(var i=1; i<=nbPlayers; i++)
-    {
-        createPlayer("Player "+i);
-    }
     
     function instructions()
     {
@@ -57,6 +60,12 @@
         onkeydown = function(e){
             if(e.keyCode == 13)
             {
+                nbPlayers = document.querySelector(".nbPlayers").value;
+                for(var i=1; i<=nbPlayers; i++)
+                {
+                    createPlayer("Player "+i);
+                }
+
                 document.querySelector(".instructions").remove();
                 resetPlayers();
                 onkeydown = gameUpdate;
@@ -234,6 +243,7 @@
             display: inline-block;
             vertical-align: top;
             text-align: center;
+            height: 250px;
         }
 
         .target{
